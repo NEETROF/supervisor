@@ -1,0 +1,7 @@
+# see https://docs.dapr.io/developing-applications/local-development/multi-app-dapr-run/multi-app-overview/
+version: 1
+apps:
+  - appID: tenant-service
+    appDirPath: ./
+    appPort: 8081
+    daprHTTPPort: 3005
