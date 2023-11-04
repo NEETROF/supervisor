@@ -26,6 +26,7 @@ It's a project to periodically test APIs endpoints, send alerts and get APIs sta
 
 ### Built With
 
+* [![Dapr][Dapr]][Dapr-url]
 * [![Spring][Spring]][Spring-url]
 * [![Kotlin][Kotlin]][Kotlin-url]
 * [![Vue][Vue.js]][Vue-url]
@@ -111,7 +112,8 @@ Project Link: [https://github.com/NEETROF/supervisor](https://github.com/NEETROF
 [Kotlin-url]: https://kotlinlang.org/
 [Spring]: https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white
 [Spring-url]: https://spring.io/
-
+[Dapr]: https://img.shields.io/badge/Dapr-0D2192.svg?style=for-the-badge&logo=Dapr&logoColor=white
+[Dapr-url]: https://dapr.io/
 
 ## Architecture Schema
 

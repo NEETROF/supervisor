@@ -1,0 +1,17 @@
+server:
+  port : 8081
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost/tenantdb
+    username: supervisor_dev
+    password: supervisor_dev
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:liquibase/db.changelog-master.xml
+
+springdoc:
+  api-docs:
+    path: /api-docs
