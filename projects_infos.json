@@ -1,0 +1,6 @@
+{
+  "tenant_service": {
+    "directory": "services/tenant/",
+    "sonar_project_key": "neetrof_supervisor_tenant_service"
+  }
+}

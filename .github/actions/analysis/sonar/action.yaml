@@ -1,0 +1,53 @@
+name: Analysis Sonar
+description: Trigger Sonar analysis
+
+inputs:
+  SONAR_HOST_URL:
+    description: "sonar url"
+    required: true
+  SONAR_TOKEN:
+    description: "Sonar Token for this sonar project"
+    required: true
+  SONAR_PROJECT_KEY:
+    description: "Project key for this sonar project"
+    required: true
+  SONAR_ORGANISATION:
+    description: "Organisation for this sonar project"
+    required: true
+  PACKAGE_DIRECTORY:
+    description: "Directory to check for package type"
+    required: true
+  JAVA_VERSION:
+    description: "Java version"
+    required: true
+    default: "17"
+  BUILD_OPTIONS:
+    description: "Options to pass to the mvn -B verify command"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+
+    - uses: actions/checkout@v3.2.0
+      with:
+        fetch-depth: 0
+        clean: false
+
+    - uses: ./.github/actions/package-type
+      id: package
+      with:
+        PACKAGE_DIRECTORY: ${{ inputs.PACKAGE_DIRECTORY }}
+
+    - name: Sonar Analysis Maven
+      uses: ./.github/actions/analysis/sonar/maven
+      if: ${{  steps.package.outputs.PACKAGE  == 'maven' }}
+      with:
+        SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}
+        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ inputs.SONAR_PROJECT_KEY }}
+        SONAR_ORGANISATION: ${{ inputs.SONAR_ORGANISATION }}
+        PACKAGE_DIRECTORY: ${{ inputs.PACKAGE_DIRECTORY }}
+        JAVA_VERSION: ${{ inputs.JAVA_VERSION }}
+        BUILD_OPTIONS: ${{ inputs.BUILD_OPTIONS }}

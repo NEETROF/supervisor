@@ -1,0 +1,60 @@
+name: Analysis Sonar
+description: Trigger Sonar analysis
+
+inputs:
+  SONAR_HOST_URL:
+    description: "sonar url"
+    required: true
+  SONAR_TOKEN:
+    description: "Sonar Token for this sonar project"
+    required: true
+  SONAR_PROJECT_KEY:
+    description: "Project key for this sonar project"
+    required: true
+  SONAR_ORGANISATION:
+    description: "Organisation for this sonar project"
+    required: true
+  PACKAGE_DIRECTORY:
+    description: "Directory to check for package type"
+    required: true
+  JAVA_VERSION:
+    description: "Java version"
+    required: false
+    default: "17"
+  BUILD_OPTIONS:
+    description: "Options to pass to the mvn -B verify command"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3.2.0
+      with:
+        fetch-depth: 0
+        clean: false
+
+    - name: ☕ Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ inputs.JAVA_VERSION }}
+        distribution: "adopt"
+        overwrite-settings: false
+
+    - name: ◼️ Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: 🏗️🩺 Build and analyze
+      shell: bash
+      env:
+        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}
+      run: |
+        cd ${{ inputs.PACKAGE_DIRECTORY }}
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.sources=. -Dsonar.organization=${{ inputs.SONAR_ORGANISATION }} -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }} ${{ inputs.BUILD_OPTIONS }}
+        
