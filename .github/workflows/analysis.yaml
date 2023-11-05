@@ -1,0 +1,64 @@
+name: 🩺 Code Analysis
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - hotfix/**
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  PROJECT_INFOS_FILE_NAME: projects_infos.json
+  SONAR_ORGANISATION: neetrof
+
+jobs:
+
+  analysis:
+    name: analysis project
+    strategy:
+      matrix:
+        project_name: ["tenant_service"]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get project directory
+        uses: sergeysova/jq-action@v2
+        id: project_directory
+        with:
+          cmd: "jq '.${{ matrix.project_name }}.directory' $PROJECT_INFOS_FILE_NAME -r"
+
+      - name: Get sonar projet key
+        uses: sergeysova/jq-action@v2
+        id: sonar_project_key
+        with:
+          cmd: "jq '.${{ matrix.project_name }}.sonar_project_key' $PROJECT_INFOS_FILE_NAME -r"
+
+      - name: Set package
+        id: package
+        uses: ./.github/actions/package-type
+        with:
+          PACKAGE_DIRECTORY: ${{ steps.project_directory.outputs.value }}
+
+      - name: 🌍 Set package type in env
+        id: set-package
+        run: echo "PACKAGE=${{ steps.package.outputs.PACKAGE }}" >> $GITHUB_OUTPUT
+
+      - name: Analysis Sonar
+        uses: ./.github/actions/analysis/sonar
+        with:
+          SONAR_HOST_URL: "https://sonarcloud.io"
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORGANISATION: ${{ env.SONAR_ORGANISATION }}
+          PACKAGE_DIRECTORY: ${{ steps.project_directory.outputs.value }}
+          SONAR_PROJECT_KEY: ${{ steps.sonar_project_key.outputs.value }}
+          JAVA_VERSION: "17"
+          BUILD_OPTIONS: '-Dsonar.exclusions="**/test/**, **/pom.xml"'
+

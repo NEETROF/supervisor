@@ -1,4 +1,4 @@
-package com.neetrof.supervisor.service.tenant.controller
+package com.neetrof.supervisor.service.tenant.application.rest.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

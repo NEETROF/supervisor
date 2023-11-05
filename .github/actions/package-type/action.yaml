@@ -1,0 +1,28 @@
+name: Check package type
+description: Check Package Type
+
+inputs:
+  PACKAGE_DIRECTORY:
+    description: "Directory to check for package type"
+    required: true
+
+outputs:
+  PACKAGE:
+    description: "package type inside repository folder"
+    value: ${{ steps.package.outputs.PACKAGE }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check package type
+      shell: bash
+      id: package
+      run: |
+        if [[ $( git ls-files --directory "${{ inputs.PACKAGE_DIRECTORY }}" | grep pom.xml | wc -l ) != 0 ]]; then
+          export PACKAGE=maven
+        else 
+          export PACKAGE=unknown
+        fi
+        echo "PACKAGE=$PACKAGE" >> "$GITHUB_ENV"
+        echo "PACKAGE=$PACKAGE" >> "$GITHUB_OUTPUT"
+        echo "PACKAGE is type $PACKAGE"
