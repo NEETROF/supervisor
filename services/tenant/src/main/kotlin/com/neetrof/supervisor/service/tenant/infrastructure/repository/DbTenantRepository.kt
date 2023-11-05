@@ -28,8 +28,10 @@ class DbTenantRepository (
     }
 
     override fun createTenant(createTenant: CreateTenant): Tenant {
-        if(jpaTenantRepository.findOne(createTenant.id) != null)
-            throw IllegalArgumentException(messageSource.getMessage("tenant_with_id_p0_already_exists", arrayOf(createTenant.id)))
+
+        require(jpaTenantRepository.findOne(createTenant.id) == null,
+            lazyMessage = { messageSource.getMessage("tenant_with_id_p0_already_exists", arrayOf(createTenant.id))
+        })
 
         var tenantEntity = tenantMapper.toEntity(createTenant)
         tenantEntity = jpaTenantRepository.save(tenantEntity)
