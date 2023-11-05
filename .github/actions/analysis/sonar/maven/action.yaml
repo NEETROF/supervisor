@@ -56,5 +56,5 @@ runs:
         SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}
       run: |
         cd ${{ inputs.PACKAGE_DIRECTORY }}
-        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.sources=. -Dsonar.organization=${{ inputs.SONAR_ORGANISATION }} -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }} ${{ inputs.BUILD_OPTIONS }}
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.sources=./src -Dsonar.organization=${{ inputs.SONAR_ORGANISATION }} -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }} ${{ inputs.BUILD_OPTIONS }}
         
